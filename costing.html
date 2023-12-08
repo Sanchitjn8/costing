@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .material-container {
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="costCalculator">
+        <div id="materialsContainer"></div>
+        <button type="button" onclick="addMaterial()">Add Raw Material</button>
+
+        <button type="button" onclick="calculateCost()">Calculate</button>
+
+        <label for="result">Average Cost per kg (Rs):</label>
+        <input type="text" id="result" name="result" readonly>
+    </form>
+
+    <script>
+        var materialCount = 1;
+
+        function addMaterial() {
+            var container = document.getElementById('materialsContainer');
+            var materialDiv = document.createElement('div');
+            materialDiv.className = 'material-container';
+
+            materialDiv.innerHTML = `
+                <label for="rawMaterialCost${materialCount}">Raw Material ${materialCount} Cost (Rs):</label>
+                <input type="number" id="rawMaterialCost${materialCount}" name="rawMaterialCost${materialCount}" required>
+
+                <label for="quantity${materialCount}">Quantity ${materialCount} (kg):</label>
+                <input type="number" id="quantity${materialCount}" name="quantity${materialCount}" required>
+            `;
+
+            container.appendChild(materialDiv);
+            materialCount++;
+        }
+
+        function calculateCost() {
+            var totalCost = 0;
+            var totalQuantity = 0;
+
+            for (var i = 1; i < materialCount; i++) {
+                var rawMaterialCost = parseFloat(document.getElementById(`rawMaterialCost${i}`).value);
+                var quantity = parseFloat(document.getElementById(`quantity${i}`).value);
+
+                if (!isNaN(rawMaterialCost) && !isNaN(quantity) && quantity > 0) {
+                    totalCost += rawMaterialCost * quantity;
+                    totalQuantity += quantity;
+                } else {
+                    alert(`Please enter valid values for Raw Material ${i} Cost and Quantity.`);
+                    return;
+                }
+            }
+
+            if (totalQuantity > 0) {
+                var averageCostPerKg = totalCost / totalQuantity;
+                document.getElementById('result').value = averageCostPerKg.toFixed(2);
+            } else {
+                alert('Please add at least one raw material.');
+            }
+        }
+    </script>
+
+</body>
+</html>
